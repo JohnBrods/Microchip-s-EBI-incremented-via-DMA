@@ -1967,7 +1967,7 @@ Clear_Screen_SSD1963(unsigned int Colour){
   switch (Colour)  {
     case (Colour < 16):  
       for(i=0;i<pixelCount;i++) {
-        Write_Data_SSD1963(colorArr[Colour]); 
+        Write_Data_SSD1963(colourArr[Colour]); 
       }
       break;
                           

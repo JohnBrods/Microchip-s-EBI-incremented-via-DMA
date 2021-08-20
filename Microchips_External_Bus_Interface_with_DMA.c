@@ -1,3 +1,22 @@
+// Filename: Microchips_External_Bus_Interface_with_DMA.c
+//   Author: John B on YouTube
+//     Date: Monday Aug 2, 2021
+//  Version: 0.01 - Initial Commit: "EBI incremented via DMA as demonstrated on YouTube" 
+//
+// Description: 
+//
+// In my experiments to use Microchips EBI (external bus interface) on the PIC
+// microntrollers, I was unable to increment the address used to access the
+// external device, and so I tinkered until I found a way to update the
+// address, using DMA functions.
+//
+// This file is a proof of concept, and is the code discussed in my YT video:
+//
+// "Microchip's (EBI) External Bus Interface & (DMA) Direct Memory Access + SSD1963"
+// https://www.youtube.com/watch?v=cyUOqkH1NNg
+//
+// - cpb
+//
 
 
 const unsigned long __Arial_Unicode_MS16x21_Regular  = 0x00000378;
@@ -28,6 +47,13 @@ const unsigned long Bigwaterfallslowmotion8x4_jpg    = 0x00E29F26;
 const unsigned long Leo800x480_jpg                   = 0x00EE572C;
 
 
+// Define our custom fonts.
+
+// FontName: Academy_Engraved_LET121x183_Regular
+// FontSize: 121x183
+//
+// - cpb
+//
 
 const code char Academy_Engraved_LET121x183_Regular[] = {
    0x00,
@@ -727,6 +753,13 @@ const code char Academy_Engraved_LET121x183_Regular[] = {
    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 // Code for char num 58
         };
+        
+// FontName: Script_MT_Bold35x42_Bold
+// FontSize: 35x42
+//
+// - cpb
+//
+
 const code char Script_MT_Bold35x42_Bold[] = {
    0x00,
    0x00,
@@ -1084,10 +1117,10 @@ const code char Script_MT_Bold35x42_Bold[] = {
    0x07,0x0E,0x07,0x0E,0x07,0xFE,0x07,0xFE,0x07,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 // Code for char num 127
         };
 
-
-
-
-
+// Standard GLCD Font Definitions
+//
+// - cpb
+//
 
 //GLCD FontName : Tahoma30x32
 //GLCD FontSize : 30 x 32
@@ -1293,18 +1326,6 @@ const unsigned short Tahoma30x32[] = {
    0x00,0x00,0xFE,0x01,0xFE,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0x82,0x01,0xFE,0x01,0xFE,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 // Code for char num 127
         };
 
-
-
-
-
-
-
-
-
-
-
-
-
 //GLCD FontName : Academy_Engraved_LET22x25
 //GLCD FontSize : 22 x 25
 
@@ -1323,7 +1344,6 @@ const unsigned short Number_Font[] = {
         };
 
 
-
 const unsigned char Number_Font_Start = 0;
 const unsigned char Number_Font_Length_Bytes = 75;
 const unsigned char Number_Font_Width = 24;      // full bytes of pixels   8,16,24,32,40 etc
@@ -1331,44 +1351,127 @@ const unsigned char Number_Font_Height = 25;     //Academy_Engraved_LET16x20
 const unsigned char Number_Font_Spacing = 2;
 
 
+// The const definitions below are replaced with an 'enum' statement:
+
+enum {Black, Brown, Red, Orange, Yellow, Green, Blue, Violet, Olive, White, Magenta, Lime, Baby_Powder, Cyan, Lavenderblush, Beige}
+
+// We now have the following values defined:
+//
+//    Black         =  0
+//    Brown         =  1
+//    Red           =  2
+//    Orange        =  3
+//    Yellow        =  4
+//    Green         =  5
+//    Blue          =  6
+//    Violet        =  7
+//    Olive         =  8
+//    White         =  9
+//    Magenta       = 10
+//    Lime          = 11
+//    Baby_Powder   = 12
+//    Cyan          = 13
+//    Lavenderblush = 14
+//    Beige         = 15
+//
+// These values start at zero and can be used as an index to an array.
+//
+// Commented out the const definitions below to work with the new
+// implementation using enum and an array indexed by the enum'd values.
+//
+// No space or performance benefit here. Just neater, more efficient coding.
+// Human efficiency.. not machine efficiency.
+//
+// - cpb
+//
+
+//
+// const unsigned char Black = 0;
+// const unsigned char Brown = 1;
+// const unsigned char Red = 2;
+// const unsigned char Orange = 3;
+// const unsigned char Yellow = 4;
+// const unsigned char Green = 5;
+// const unsigned char Blue = 6;
+// const unsigned char Violet = 7;
+// const unsigned char Olive = 8;
+// const unsigned char White = 9;
+// const unsigned char Magenta = 10;
+// const unsigned char Lime = 11;
+// const unsigned char Baby_Powder = 12;
+// const unsigned char Cyan = 13;
+// const unsigned char Lavenderblush = 14;
+// const unsigned char Beige = 15;
+//
+
+// Since we're using a single command to write a colour pixel to the LCD, we
+// can simply use one call, but change the parameter passed. See below.
+//
+// Using the above 'enum'd values, and the array of binary values as indexed
+// by these values, we don't need the below defines.
+//
+// The following defines are only used once in the original version. My change
+// deprecates their use, but I will leave them here for posterity. I removed
+// the ';' semi-colon at the end of each define as this is syntatically bad.
+//
+// - cpb
+//
 
 
+// #define Black_Out         Write_Data_SSD1963(0b0000000000000000)
+// #define Brown_Out         Write_Data_SSD1963(0b1111101000000000)
+// #define Red_Out           Write_Data_SSD1963(0b1111100000000000)
+// #define Orange_Out        Write_Data_SSD1963(0b1111001110000000)
+// #define Yellow_Out        Write_Data_SSD1963(0b1111111111100000)
+// #define Green_Out         Write_Data_SSD1963(0b0000011111100000)
+// #define Blue_Out          Write_Data_SSD1963(0b0000000000010111)
+// #define Violet_Out        Write_Data_SSD1963(0b1111000000011111)
+// #define Olive_Out         Write_Data_SSD1963(0b0011100111100011)
+// #define White_Out         Write_Data_SSD1963(0b1111111111111111)
+// #define Magenta_Out       Write_Data_SSD1963(0b1111100100001101)
+// #define Lime_Out          Write_Data_SSD1963(0b0111011111101100)
+// #define Baby_Powder_Out   Write_Data_SSD1963(0b1110111010001111)
+// #define Cyan_Out          Write_Data_SSD1963(0b0000011111111111)
+// #define Lavenderblush_Out Write_Data_SSD1963(0b1111101111000111)
+// #define Beige_Out         Write_Data_SSD1963(0b1011110000000000)
 
+// Here we create an array to store the values for our enum'd values. As the
+// values are 16-bits long, we use the PIC32 'short' type as this is a 16-bit
+// chunk of memory. We make it unsigned short, because we don't care for 
+// using negative numbers in this space.
+//
+// 'unsigned short' type could be used more throughout this file to replace
+// the used 'unsigned int' (32-bits) types, to save space in the MCU 
+// flash/SRAM.
+//
+// To access the values in the array by index, we can use the enum'd colour
+// names:
+// 
+//
+//                              Literal Binary Value     | Index | Enum'd Variable 
+//                             --------------------------+-------+-------------------- 
 
-#define Black_Out         Write_Data_SSD1963(0b0000000000000000);
-#define Brown_Out         Write_Data_SSD1963(0b1111101000000000);
-#define Red_Out           Write_Data_SSD1963(0b1111100000000000);
-#define Orange_Out        Write_Data_SSD1963(0b1111001110000000);
-#define Yellow_Out        Write_Data_SSD1963(0b1111111111100000);
-#define Green_Out         Write_Data_SSD1963(0b0000011111100000);
-#define Blue_Out          Write_Data_SSD1963(0b0000000000010111);
-#define Violet_Out        Write_Data_SSD1963(0b1111000000011111);
-#define Olive_Out         Write_Data_SSD1963(0b0011100111100011);
-#define White_Out         Write_Data_SSD1963(0b1111111111111111);
-#define Magenta_Out       Write_Data_SSD1963(0b1111100100001101);
-#define Lime_Out          Write_Data_SSD1963(0b0111011111101100);
-#define Baby_Powder_Out   Write_Data_SSD1963(0b1110111010001111);
-#define Cyan_Out          Write_Data_SSD1963(0b0000011111111111);
-#define Lavenderblush_Out Write_Data_SSD1963(0b1111101111000111);
-#define Beige_Out         Write_Data_SSD1963(0b1011110000000000);
+unsigned short colourArr[]  = {0b0000000000000000,         //  0 - Black        
+                               0b1111101000000000,         //  1 - Brown        
+                               0b1111100000000000,         //  2 - Red          
+                               0b1111001110000000,         //  3 - Orange       
+                               0b1111111111100000,         //  4 - Yellow       
+                               0b0000011111100000,         //  5 - Green        
+                               0b0000000000010111,         //  6 - Blue         
+                               0b1111000000011111,         //  7 - Violet       
+                               0b0011100111100011,         //  8 - Olive        
+                               0b1111111111111111,         //  9 - White        
+                               0b1111100100001101,         // 10 - Magenta      
+                               0b0111011111101100,         // 11 - Lime         
+                               0b1110111010001111,         // 12 - Baby_Powder  
+                               0b0000011111111111,         // 13 - Cyan         
+                               0b1111101111000111,         // 14 - Lavenderblush
+                               0b1011110000000000 };       // 15 - Beige        
 
+//
+// - cpb
+//
 
-const unsigned char Black = 0;
-const unsigned char Brown = 1;
-const unsigned char Red = 2;
-const unsigned char Orange = 3;
-const unsigned char Yellow = 4;
-const unsigned char Green = 5;
-const unsigned char Blue = 6;
-const unsigned char Violet = 7;
-const unsigned char Olive = 8;
-const unsigned char White = 9;
-const unsigned char Magenta = 10;
-const unsigned char Lime = 11;
-const unsigned char Baby_Powder = 12;
-const unsigned char Cyan = 13;
-const unsigned char Lavenderblush = 14;
-const unsigned char Beige = 15;
 
 sbit SRAM_CS at LATJ4_Bit;
 sbit SRAM_CS_Direction at TRISJ4_bit;
@@ -1620,8 +1723,34 @@ static void Init_MCU() {
 }
 
 
-unsigned short seconds10s;
+// Setup some variables to store our date_time info.
+//
+// We need a variable for each of the following number parts, for the purpose
+// of rendering them individually:
+//
+//        Seconds - Ones column
+//        Seconds - Tens column
+//
+//        Minutes - Ones column
+//        Minutes - Tens column
+//
+//        Hours - Ones column
+//        Hours - Tens column
+//
+//        Months - Ones column
+//        Months - Tens column
+//
+//        Date - Ones column
+//        Date - Tens column
+//
+//        Year - Ones column
+//       
+//
+// - cpb
+//
+
 unsigned short seconds1s;
+unsigned short seconds10s;
 unsigned short minutes1s;
 unsigned short minutes10s;
 unsigned short hours1s;
@@ -1731,24 +1860,36 @@ unsigned int Background_Colour;
 
 Clear_Screen_SSD1963(unsigned int Colour){
 
-     unsigned long i;
-     TFT_CS = 0;
-     Background_Colour = 0x00 | Colour;
+    unsigned long i;
+    TFT_CS = 0;
+     
+    // This is odd. It takes time to perform the OR, before assigning to 
+    // Background_Colour. Assigning Colour directly to Background_Colour
+    // produces the same result.
+    //
+    // Background_Colour = 0x00 | Colour;
+    Background_Colour = Colour;
+    //
+    // - cpb
+    //
 
-     Write_Command_SSD1963(0x2A); //Set Column Address 800
-     Write_Data_SSD1963(0x00);
-     Write_Data_SSD1963(0x00);
-     Write_Data_SSD1963(0x03);
-     Write_Data_SSD1963(0x20);
+    const int pixelCount = 384480;
+     
+    Write_Command_SSD1963(0x2A); //Set Column Address 800
+    Write_Data_SSD1963(0x00);
+    Write_Data_SSD1963(0x00);
+    Write_Data_SSD1963(0x03);
+    Write_Data_SSD1963(0x20);
 
-     Write_Command_SSD1963(0x2B); //Set Row Address 480
-     Write_Data_SSD1963(0);
-     Write_Data_SSD1963(0);
-     Write_Data_SSD1963(0x1);
-     Write_Data_SSD1963(0xE0);
+    Write_Command_SSD1963(0x2B); //Set Row Address 480
+    Write_Data_SSD1963(0);
+    Write_Data_SSD1963(0);
+    Write_Data_SSD1963(0x1);
+    Write_Data_SSD1963(0xE0);
 
-     Write_Command_SSD1963(0x2C);   // Write Memory Start, 0x2C
+    Write_Command_SSD1963(0x2C);   // Write Memory Start, 0x2C
 
+/*
     switch (Colour)  {
 
      case 0:     for(i=0;i<384480;i++){
@@ -1803,11 +1944,65 @@ Clear_Screen_SSD1963(unsigned int Colour){
                  Write_Data_SSD1963(Colour);
                  } break;
     }
+*/
 
+// Re-defined the switch statement (from above), and this only still exists,
+// because the Clear_Screen_SSD1963() function seems to offer a facility to
+// blank the screen using a passed colour value which is not one of the defined
+// values.
+//
+// As a result we only perform 2 checks, and if the 'Colour' passed is 0-15
+// we call the Write_Data__SSD1963() function using the indexed value read
+// from the array of defined colours, else we call the function using the 
+// discrete value passed into the function as called.
+//
+// If this 'wildcard' use of the Clear_Screen_SSD1963() function was not
+// needed, we could get away with no switch statement, although sanity checking
+// of the passed value should still be performed. NOTE: we are not really
+// performing any sanity checking here. 
+//
+// - cpb
+//
+
+  switch (Colour)  {
+    case (Colour < 16):  
+      for(i=0;i<pixelCount;i++) {
+        Write_Data_SSD1963(colourArr[Colour]); 
+      }
+      break;
+                          
+    default:  
+      for(i=0;i<pixelCount;i++) {
+        Write_Data_SSD1963(Colour);
+      } 
+      break;
+  }
+        
+                 
     TFT_CS = 1;
-    return Background_Colour;
+    
+    // Why are we returning a value here? Function is not defined as having a 
+    // return type. Background_Colour is a global variable, which is modified 
+    // within the scope of this very function, and each place throughout the 
+    // rest of the file where Clear_Screen_SSD1963() is called, return value
+    // is thrown away.
+    //
+    // Commenting this out as redundant.
+    //
+    //   return Background_Colour;        // <---- Redundant / Legacy
+    //
+    // - cpb
+    //
+
 }
 
+
+// See above function Clear_Screen_SSD1963() for an eaxmple on how the switch
+// statements used here in Get_Pixel_Colour() could be re-written to use
+// less comparisions.
+//
+// - cpb
+//
 
 unsigned int Pixel;
 Get_Pixel_Colour(unsigned int Colour){

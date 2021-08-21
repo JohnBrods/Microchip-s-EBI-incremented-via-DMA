@@ -1,7 +1,7 @@
                                                    /*Anyone is free to copy, modify, publish, use, compile or
                                                     distribute this software, either in source code form or as a compiled
                                                     binary, for non-commercial use only. (i.e. YOU MAY NOT SELL IT)
-                                                    John B 20/08/2021
+                                                    John B 21/08/2021
 
                                                     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
                                                     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
@@ -15,7 +15,7 @@
 // Filename: Microchips_External_Bus_Interface_with_DMA.c
 //   Author: John B on YouTube  with additional improvements from 'tifkat' (Thank you tifkat).
 //     Date: Monday Aug 2, 2021
-//  Version: 0.02 - Initial Commit: "EBI incremented via DMA as demonstrated on YouTube"
+//  Version: 0.03 - Initial Commit: "EBI incremented via DMA as demonstrated on YouTube"
 //
 // Description:
 //
@@ -24,7 +24,7 @@
 // external device, and so I tinkered until I found a way to update the
 // address, using DMA functions.
 //
-// This file is a proof of concept, and is the code discussed in my YT video:
+// This file is a proof of concept, and is the code discussed in my YouTube video:
 //
 // "Microchip's (EBI) External Bus Interface & (DMA) Direct Memory Access + SSD1963"
 // https://www.youtube.com/watch?v=cyUOqkH1NNg
@@ -63,7 +63,6 @@ const unsigned long Leo800x480_jpg                   = 0x00EE572C;
 //
 // - cpb
 //
-
         
 const code char Academy_Engraved_LET101x183_Regular[] = {   //ascii 48 to 58
    0x00,
@@ -1329,26 +1328,6 @@ enum {Black, Brown, Red, Orange, Yellow, Green, Blue, Violet, Olive, White, Mage
 //
 // - cpb
 //
-
-//
-// const unsigned char Black = 0;
-// const unsigned char Brown = 1;
-// const unsigned char Red = 2;
-// const unsigned char Orange = 3;
-// const unsigned char Yellow = 4;
-// const unsigned char Green = 5;
-// const unsigned char Blue = 6;
-// const unsigned char Violet = 7;
-// const unsigned char Olive = 8;
-// const unsigned char White = 9;
-// const unsigned char Magenta = 10;
-// const unsigned char Lime = 11;
-// const unsigned char Baby_Powder = 12;
-// const unsigned char Cyan = 13;
-// const unsigned char Lavenderblush = 14;
-// const unsigned char Beige = 15;
-//
-
 // Since we're using a single command to write a colour pixel to the LCD, we
 // can simply use one call, but change the parameter passed. See below.
 //
@@ -1422,25 +1401,25 @@ sbit SRAM_WE at LATC3_Bit;
 sbit SRAM_WE_Direction at TRISC3_bit;  //WRITE PIN PMP WR WRITE PIN ON PIC PIN 12 PIN 17 ON SRAM W/E   WRITE IS SRAM INPUT ENABLE
 
 sbit SRAM_RD at LATC4_Bit;
-sbit SRAM_RD_Direction at TRISC4_bit;  //WRITE PIN PMP READ PIN   READ IS SRAM OUTPUT ENABLW
+sbit SRAM_RD_Direction at TRISC4_bit;  //WRITE PIN PMP READ PIN   READ IS SRAM OUTPUT ENABLE
 
-// TFT Connections
+//TFT Connections
 unsigned char TFT_DataPort at LATE;
 unsigned char TFT_DataPort_Direction at TRISE;  //TRISE is lower PMD 0>7
 
 sbit TFT_RST at LATB11_Bit; //RESET
 
-sbit TFT_RS  at LATG12_BIT;  //TRD1/SQID1/RG12 PIN140
+sbit TFT_RS  at LATG12_BIT; //TRD1/SQID1/RG12 PIN140
 
-sbit TFT_CS  at LATG15_BIT;  //NEW 252 EFH
+sbit TFT_CS  at LATG15_BIT; //NEW 252 EFH
 
 sbit TFT_RD  at LATC4_bit;  //PMRD  READ   EBIOE/AN19/RPC4/PMRD/RC4 PIN 13
 
 sbit TFT_WR  at LATC3_bit;  //PMWR  WRITE  EBIWE/AN20/RPC3/PMWR/RC3 PIN 12
 
-sbit TFT_RST_Direction at TRISB11_bit;    //RESET
+sbit TFT_RST_Direction at TRISB11_bit;   //RESET
 
-sbit TFT_RS_Direction  at TRISG12_BIT;    //PIN 140 RG12
+sbit TFT_RS_Direction  at TRISG12_BIT;   //PIN 140 RG12
 
 sbit TFT_CS_Direction  at TRISG15_BIT;   //NEW 252 EFH
 
@@ -1450,7 +1429,6 @@ sbit TFT_WR_Direction  at TRISC3_bit;    //PMWR  WRITE  EBIWE/AN20/RPC3/PMWR/RC3
 
 sbit Mmc_Chip_Select            at LATE8_bit;
 sbit Mmc_Chip_Select_Direction at TRISE8_bit;
-
 
 void Set_Index(unsigned char index) {
   TFT_RS = 0;
@@ -1490,7 +1468,7 @@ void Init_16Bit_PMP() {
   PMMODEbits.MODE = 2;     // Master 2     slave =1
   PMMODEbits.WAITB = 0;    //WAITB<1:0>: Data Setup Time Before Read/Write Strobe Wait States bits(1) 11 = Data wait of 4 TPB; multiplexed address phase of 4 TPB  10 = Data wait of 3 TPB; multiplexed address phase of 3 TPB 01 = Data wait of 2 TPB; multiplexed address phase of 2 TPB 00 = Data wait of 1 TPB; multiplexed address phase of 1 TPB (default)
   PMMODEbits.WAITM = 0;    //Width Of Strobe Pulse 1111 = Wait of 16 TPB --0001 = Wait of 2 TPB-- 0000 = Wait of 1 TPB (default)
-  PMMODEbits.WAITE = 0;   //bit 1-0WAITE<1:0>: Data Hold Time After Read/Write Strobe Wait States bits(1)
+  PMMODEbits.WAITE = 0;    //bit 1-0WAITE<1:0>: Data Hold Time After Read/Write Strobe Wait States bits(1)
 
   PMMODEbits.MODE16 = 1;   // 1 = 16-bit mode: a read or write to the data register invokes a single 16-bit transfer   For read operations  11 = Wait of 3 TPB  00 = Wait of 0 TPB (default)
   PMCONbits.CSF = 0;      //chip select bit
@@ -1498,7 +1476,7 @@ void Init_16Bit_PMP() {
   PMCONbits.PTWREN = 1;   //WRITE STROBE
   PMCONbits.PMPEN = 1;
 
-  TFT_Set_Active(Set_Index,Write_Command,Write_Data);
+  TFT_Set_Active(Set_Index,Write_Command,Write_Data); //This Is Used In MikroE If Using Their Library.
 }
 
 void TFT_Set_DBC_SSD1963_BACKLIGHT(char value2) {  //PAGE54
@@ -1771,7 +1749,7 @@ char *txt;
  }
 
 
-void Set_Time(){   //old code now. I used the Pic internal RTCC for the 'Half Second' bit in the While 1.
+void Set_Time(){   //OLD CODE NOW. I used the Pic internal RTCC for the 'Half Second' bit in the While 1.
 
     // RTCC registers unlock procedure
    SYSKEY = 0xAA996655;      // Write first unlock key to SYSKEY
@@ -1789,7 +1767,7 @@ void Set_Time(){   //old code now. I used the Pic internal RTCC for the 'Half Se
    while(!(RTCCON&0x40));     // Wait for clock to be turned on  (RTCCLKON)
 
    SOSCEN_bit = 1;
-   //  RTCCLKSEL<1:0>: RTCC Clock Select bits
+   //RTCCLKSEL<1:0>: RTCC Clock Select bits
    RTCCLKSEL1_bit = 0;
    RTCCLKSEL0_bit = 1;    //00 = RTCC uses the internal 32 kHz oscillator (INTOSC) //   RTCCLKSEL0_bit = 1;  //01 = RTCC uses the external 32.768 kHz Secondary Oscillator (SOSC)
 }
@@ -1833,7 +1811,6 @@ void Clear_Screen_SSD1963(unsigned int Colour){
     TFT_CS = 1;
 }
 
-
 // See above function Clear_Screen_SSD1963() for an eaxmple on how the switch
 // statements used here in Get_Pixel_Colour() could be re-written to use
 // less comparisions.
@@ -1842,7 +1819,7 @@ void Clear_Screen_SSD1963(unsigned int Colour){
 //
 
 unsigned int Pixel;
-Get_Pixel_Colour(unsigned int Colour){
+void Get_Pixel_Colour(unsigned int Colour){   //Left This Here, Additional Calls Will Slow Down The Fast 'Write Number' Function
 
       switch (Colour)  {
 
@@ -2281,9 +2258,9 @@ void Write_Number_Space(unsigned int X_Position, unsigned int Y_Position){
    unsigned char DoneSeven = 1;
    unsigned char DoneEight = 1;
    unsigned char DoneNine  = 1;
-   unsigned char  ValidEight = 0, ValidSeven = 0, ValidSix = 0, ValidFive = 0, ValidFour = 0, ValidThree = 0, ValidTwo = 0, ValidOne = 0, ValidZero = 0;
+   unsigned char ValidEight = 0, ValidSeven = 0, ValidSix = 0, ValidFive = 0, ValidFour = 0, ValidThree = 0, ValidTwo = 0, ValidOne = 0, ValidZero = 0;  //Cuts Out Switch Case If Not Used
 
-void Write_Number(unsigned long num,unsigned int X_Position,unsigned int Y_Position, unsigned char Font_Colour) {
+void Write_Number(unsigned long num,unsigned int X_Position,unsigned int Y_Position, unsigned int Colour) {
 
    unsigned int Font_Width;
    unsigned int units_start;
@@ -2296,9 +2273,7 @@ void Write_Number(unsigned long num,unsigned int X_Position,unsigned int Y_Posit
    unsigned int ten_million_start;
    unsigned int hundred_million_start;
    unsigned int Billion_Start;
-   unsigned char Colour;
    static unsigned char numberstring[14];
-   Colour = 0x00 | Font_Colour;
    Font_Width = Number_Font_Width + Number_Font_Spacing;
 
     if (num <=9){
@@ -2321,122 +2296,122 @@ void Write_Number(unsigned long num,unsigned int X_Position,unsigned int Y_Posit
       }
 
       if (num >=1000 && num<=9999){             //thousand
-       DoneThree = 0;
-       ValidSix = 1;
-       ValidSeven = 1;
-       ValidEight = 1;
-       units_start = X_Position +Font_Width *3;
-       tens_start = X_Position + Font_Width *2;
-       hundreds_start = X_Position + Font_Width*1;
-       thousands_start = X_Position;
+        DoneThree = 0;
+        ValidSix = 1;
+        ValidSeven = 1;
+        ValidEight = 1;
+        units_start = X_Position +Font_Width *3;
+        tens_start = X_Position + Font_Width *2;
+        hundreds_start = X_Position + Font_Width*1;
+        thousands_start = X_Position;
        }
 
        if (num >=10000 && num<=99999){            //ten thousand to 99 thousand
-       DoneFour = 0;
-       ValidFive = 1;
-       ValidSix = 1;
-       ValidSeven = 1;
-       ValidEight = 1;
-       units_start = X_Position + Font_Width *4;
-       tens_start = X_Position +Font_Width *3;
-       hundreds_start = X_Position + Font_Width *2;
-       thousands_start = X_Position + Font_Width*1;
-       ten_thousands_start = X_Position;
+        DoneFour = 0;
+        ValidFive = 1;
+        ValidSix = 1;
+        ValidSeven = 1;
+        ValidEight = 1;
+        units_start = X_Position + Font_Width *4;
+        tens_start = X_Position +Font_Width *3;
+        hundreds_start = X_Position + Font_Width *2;
+        thousands_start = X_Position + Font_Width*1;
+        ten_thousands_start = X_Position;
        }
 
        if (num >=100000 && num<=999999){         //100 thousand  to 999 thousand
-       DoneFive = 0;
-       ValidFour = 1;
-       ValidFive = 1;
-       ValidSix = 1;
-       ValidSeven = 1;
-       ValidEight = 1;
-       units_start = X_Position + Font_Width *5;
-       tens_start = X_Position + Font_Width *4;
-       hundreds_start = X_Position + Font_Width *3;
-       thousands_start = X_Position+ Font_Width *2;
-       ten_thousands_start = X_Position + Font_Width*1;
-       hundred_thousands_start = X_Position;
+        DoneFive = 0;
+        ValidFour = 1;
+        ValidFive = 1;
+        ValidSix = 1;
+        ValidSeven = 1;
+        ValidEight = 1;
+        units_start = X_Position + Font_Width *5;
+        tens_start = X_Position + Font_Width *4;
+        hundreds_start = X_Position + Font_Width *3;
+        thousands_start = X_Position+ Font_Width *2;
+        ten_thousands_start = X_Position + Font_Width*1;
+        hundred_thousands_start = X_Position;
        }
 
        if (num >=1000000 && num<=9999999){         // 1 million  to 9'999'999
-       DoneSix = 0;
-       ValidThree = 1;
-       ValidFour = 1;
-       ValidFive = 1;
-       ValidSix = 1;
-       ValidSeven = 1;
-       ValidEight = 1;
-       units_start = X_Position+ Font_Width *6;
-       tens_start = X_Position + Font_Width *5;
-       hundreds_start = X_Position +Font_Width *4;
-       thousands_start = X_Position+ Font_Width *3;
-       ten_thousands_start = X_Position+ Font_Width *2;
-       hundred_thousands_start = X_Position+ Font_Width*1;
-       million_start = X_Position;
+        DoneSix = 0;
+        ValidThree = 1;
+        ValidFour = 1;
+        ValidFive = 1;
+        ValidSix = 1;
+        ValidSeven = 1;
+        ValidEight = 1;
+        units_start = X_Position+ Font_Width *6;
+        tens_start = X_Position + Font_Width *5;
+        hundreds_start = X_Position +Font_Width *4;
+        thousands_start = X_Position+ Font_Width *3;
+        ten_thousands_start = X_Position+ Font_Width *2;
+        hundred_thousands_start = X_Position+ Font_Width*1;
+        million_start = X_Position;
        }
 
        if (num >=10000000 && num<=99999999){       //ten million to 99 million
-       DoneSeven = 0;
-       ValidTwo = 1;
-       ValidThree = 1;
-       ValidFour = 1;
-       ValidFive = 1;
-       ValidSix = 1;
-       ValidSeven = 1;
-       ValidEight = 1;
-       units_start = X_Position+ Font_Width *7;
-       tens_start = X_Position + Font_Width *6;
-       hundreds_start = X_Position + Font_Width *5;
-       thousands_start = X_Position+ Font_Width *4;
-       ten_thousands_start = X_Position+ Font_Width *3;
-       hundred_thousands_start = X_Position+ Font_Width *2;
-       million_start = X_Position+ Font_Width*1;
-       ten_million_start = X_position;
+        DoneSeven = 0;
+        ValidTwo = 1;
+        ValidThree = 1;
+        ValidFour = 1;
+        ValidFive = 1;
+        ValidSix = 1;
+        ValidSeven = 1;
+        ValidEight = 1;
+        units_start = X_Position+ Font_Width *7;
+        tens_start = X_Position + Font_Width *6;
+        hundreds_start = X_Position + Font_Width *5;
+        thousands_start = X_Position+ Font_Width *4;
+        ten_thousands_start = X_Position+ Font_Width *3;
+        hundred_thousands_start = X_Position+ Font_Width *2;
+        million_start = X_Position+ Font_Width*1;
+        ten_million_start = X_position;
        }
 
        if (num >=100000000 && num<=999999999){       //humdred million
-       DoneEight = 0;
-       ValidOne = 1;
-       ValidTwo = 1;
-       ValidThree = 1;
-       ValidFour = 1;
-       ValidFive = 1;
-       ValidSix = 1;
-       ValidSeven = 1;
-       ValidEight = 1;
-       units_start = X_Position+ Font_Width *8;
-       tens_start = X_Position + Font_Width *7;
-       hundreds_start = X_Position + Font_Width *6;
-       thousands_start = X_Position+ Font_Width *5;
-       ten_thousands_start = X_Position+ Font_Width *4;
-       hundred_thousands_start = X_Position+ Font_Width *3;
-       million_start = X_Position+ Font_Width*2;
-       ten_million_start = X_position+Font_Width;
-       hundred_million_start = X_Position;
+        DoneEight = 0;
+        ValidOne = 1;
+        ValidTwo = 1;
+        ValidThree = 1;
+        ValidFour = 1;
+        ValidFive = 1;
+        ValidSix = 1;
+        ValidSeven = 1;
+        ValidEight = 1;
+        units_start = X_Position+ Font_Width *8;
+        tens_start = X_Position + Font_Width *7;
+        hundreds_start = X_Position + Font_Width *6;
+        thousands_start = X_Position+ Font_Width *5;
+        ten_thousands_start = X_Position+ Font_Width *4;
+        hundred_thousands_start = X_Position+ Font_Width *3;
+        million_start = X_Position+ Font_Width*2;
+        ten_million_start = X_position+Font_Width;
+        hundred_million_start = X_Position;
        }
 
        if (num >=1000000000 && num<=4294967295){      //Billion  A Long Will Only Count Up To 4 Billion 4'294'967'295
-       DoneNine = 0;
-       ValidZero = 1;
-       ValidOne = 1;
-       ValidTwo = 1;
-       ValidThree = 1;
-       ValidFour = 1;
-       ValidFive = 1;
-       ValidSix = 1;
-       ValidSeven = 1;
-       ValidEight = 1;
-       units_start = X_Position + Font_Width *9;
-       tens_start = X_Position + Font_Width *8;
-       hundreds_start = X_Position + Font_Width *7;
-       thousands_start = X_Position+ Font_Width *6;
-       ten_thousands_start = X_Position+ Font_Width *5;
-       hundred_thousands_start = X_Position+ Font_Width *4;
-       million_start = X_Position+ Font_Width*3;
-       ten_million_start = X_position+Font_Width*2;
-       hundred_million_start = X_Position+Font_Width;
-       Billion_Start = X_Position;
+        DoneNine = 0;
+        ValidZero = 1;
+        ValidOne = 1;
+        ValidTwo = 1;
+        ValidThree = 1;
+        ValidFour = 1;
+        ValidFive = 1;
+        ValidSix = 1;
+        ValidSeven = 1;
+        ValidEight = 1;
+        units_start = X_Position + Font_Width *9;
+        tens_start = X_Position + Font_Width *8;
+        hundreds_start = X_Position + Font_Width *7;
+        thousands_start = X_Position+ Font_Width *6;
+        ten_thousands_start = X_Position+ Font_Width *5;
+        hundred_thousands_start = X_Position+ Font_Width *4;
+        million_start = X_Position+ Font_Width*3;
+        ten_million_start = X_position+Font_Width*2;
+        hundred_million_start = X_Position+Font_Width;
+        Billion_Start = X_Position;
        }
        LongWordTostr(num,numberstring);     // Converts input unsigned long integer number to a string
 
@@ -2854,170 +2829,6 @@ void Write_Number(unsigned long num,unsigned int X_Position,unsigned int Y_Posit
     }}
 }
 
-   unsigned char DoneOnecopy   = 1;
-   unsigned char DoneTwocopy   = 1;
-   unsigned char DoneThreecopy = 1;
-   unsigned char DoneFourcopy  = 1;
-
-Write_Number_Copy(unsigned long num,unsigned int X_Position,unsigned int Y_Position, unsigned char Font_Colour) {
-
-   unsigned int Font_Width;
-   unsigned int units_start;
-   unsigned int tens_start;
-   unsigned int hundreds_start;
-   unsigned int thousands_start;
-   unsigned char Colour;
-   static unsigned char numberstring[14];
-   Colour = 0x00 | Font_Colour;
-   Font_Width = Number_Font_Width + Number_Font_Spacing;
-
-    if (num <=9){
-        units_start = X_Position;   }
-
-   if (num >=10 && num<=99){
-       DoneOnecopy = 0;
-       units_start = X_Position +Font_Width*1;
-       tens_start= X_Position;
-      }
-
-    if (num >=100 && num<=999){
-       DoneTwocopy = 0;
-       units_start = X_Position + Font_Width *2;
-       tens_start = X_Position + Font_Width*1;
-       hundreds_start = X_Position;
-      }
-
-      if (num >=1000 && num<=9999){             //thousand
-       DoneThreecopy = 0;
-       units_start = X_Position +Font_Width *3;
-       tens_start = X_Position + Font_Width *2;
-       hundreds_start = X_Position + Font_Width*1;
-       thousands_start = X_Position;
-       }
-
-       LongWordTostr(num,numberstring);     // Converts input unsigned long integer number to a string
-
-       if (num<10 && DoneOnecopy !=1){               //Clears The Tens Position Once
-        Write_Number_Space(X_Position + Font_Width,Y_Position);
-        DoneOnecopy = 1;
-       }
-
-      if (num<100 && DoneTwocopy !=1){             //Clears The Hundreds Position Once
-        Write_Number_Space(X_Position + Font_Width *2,Y_Position);
-        DoneTwocopy = 1;
-       }
-
-       if (num<1000 && DoneThreecopy !=1){             //Clears The Thousands Position Once
-        Write_Number_Space(X_Position + Font_Width *3,Y_Position);
-        DoneThreecopy = 1;
-       }
-
-    switch (numberstring[9])  {  //units position
-
-     case 48:    X_Position = units_start;
-                 Write_Number_Zero(X_Position,Y_Position, Colour);
-                 break;
-     case 49:    X_Position = units_start;
-                 Write_Number_One(X_Position,Y_Position, Colour);
-                 break;
-     case 50:    X_Position = units_start;
-                 Write_Number_Two(X_Position,Y_Position, Colour);
-                 break;
-     case 51:    X_Position = units_start;
-                 Write_Number_Three(X_Position,Y_Position, Colour);
-                 break;
-     case 52:    X_Position = units_start;
-                 Write_Number_Four(X_Position,Y_Position, Colour);
-                 break;
-     case 53:    X_Position = units_start;
-                 Write_Number_Five(X_Position,Y_Position, Colour);
-                 break;
-     case 54:    X_Position = units_start;
-                 Write_Number_Six(X_Position,Y_Position, Colour);
-                 break;
-     case 55:    X_Position = units_start;
-                 Write_Number_Seven(X_Position,Y_Position, Colour);
-                 break;
-     case 56:    X_Position = units_start;
-                 Write_Number_Eight(X_Position,Y_Position, Colour);
-                 break;
-     case 57:    X_Position = units_start;
-                 Write_Number_Nine(X_Position,Y_Position, Colour);
-                 break;
-     default:    break;
-    }
-
-     switch (numberstring[8])  { //tens position
-
-     case 48:    X_Position = tens_start;
-                 Write_Number_Zero(X_Position,Y_Position, Colour);
-                 break;
-     case 49:    X_Position = tens_start;
-                 Write_Number_One(X_Position,Y_Position, Colour);
-                 break;
-     case 50:    X_Position = tens_start;
-                 Write_Number_Two(X_Position,Y_Position, Colour);
-                 break;
-     case 51:    X_Position = tens_start;
-                 Write_Number_Three(X_Position,Y_Position, Colour);
-                 break;
-     case 52:    X_Position = tens_start;
-                 Write_Number_Four(X_Position,Y_Position, Colour);
-                 break;
-     case 53:    X_Position = tens_start;
-                 Write_Number_Five(X_Position,Y_Position, Colour);
-                 break;
-     case 54:    X_Position = tens_start;
-                 Write_Number_Six(X_Position,Y_Position, Colour);
-                 break;
-     case 55:    X_Position = tens_start;
-                 Write_Number_Seven(X_Position,Y_Position, Colour);
-                 break;
-     case 56:    X_Position = tens_start;
-                 Write_Number_Eight(X_Position,Y_Position, Colour);
-                 break;
-     case 57:    X_Position = tens_start;
-                 Write_Number_Nine(X_Position,Y_Position, Colour);
-                 break;
-     default:    break;
-    }
-
-     switch (numberstring[7])  {   //hundreds position
-
-     case 48:    X_Position = hundreds_start;
-                 Write_Number_Zero(X_Position,Y_Position, Colour);
-                 break;
-     case 49:    X_Position = hundreds_start;
-                 Write_Number_One(X_Position,Y_Position, Colour);
-                 break;
-     case 50:    X_Position = hundreds_start;
-                 Write_Number_Two(X_Position,Y_Position, Colour);
-                 break;
-     case 51:    X_Position = hundreds_start;
-                 Write_Number_Three(X_Position,Y_Position, Colour);
-                 break;
-     case 52:    X_Position = hundreds_start;
-                 Write_Number_Four(X_Position,Y_Position, Colour);
-                 break;
-     case 53:    X_Position = hundreds_start;
-                 Write_Number_Five(X_Position,Y_Position, Colour);
-                 break;
-     case 54:    X_Position = hundreds_start;
-                 Write_Number_Six(X_Position,Y_Position, Colour);
-                 break;
-     case 55:    X_Position = hundreds_start;
-                 Write_Number_Seven(X_Position,Y_Position, Colour);
-                 break;
-     case 56:    X_Position = hundreds_start;
-                 Write_Number_Eight(X_Position,Y_Position, Colour);
-                 break;
-     case 57:    X_Position = hundreds_start;
-                 Write_Number_Nine(X_Position,Y_Position, Colour);
-                 break;
-     default:    break;
-    }
-}
-
 
 unsigned long currentSector = -1, res_file_size;
 
@@ -3080,16 +2891,16 @@ sbit Soft_I2C_Scl_Direction at TRISA2_bit;
 sbit Soft_I2C_Sda_Direction at TRISA3_bit;
 
 
-Get_I2C_Time_With_Battery_Backup(){    //software I2C because crappy ECH has no I2C stop.
-                           //  ? A2h - Write slave address  ? A3h - Read slave address    battery backup chip
+void Get_I2C_Time_With_Battery_Backup(){    //SOFTWARE I2C BECAUSE CRAPPY ECH HAS NO I2C STOP.
+                                          //  A2h - Write slave address A3h - Read slave address    battery backup chip
 
       Soft_I2C_Start();
       Soft_I2C_Write(0xA2);
       Soft_I2C_Write(0X01);
       Soft_I2C_Start();
       Soft_I2C_Write(0xA3);
-    // hundredths = Soft_I2C_Read(1);   // 00h hundredths of seconds
-       seconds2 =  Soft_I2C_Read(1);    // 01h Seconds
+    // hundredths = Soft_I2C_Read(1);  // 00h hundredths of seconds
+       seconds2 =  Soft_I2C_Read(1);   // 01h Seconds
        minutes2 = Soft_I2C_Read(1);    // 02h Minutes    6 to 4 MINUTES ten?s place,   3 to 0 unit place
        hours2   = Soft_I2C_Read(1);    // 03h Hours
        date3    = Soft_I2C_Read(1);    // 04h Days - days of month
@@ -3098,24 +2909,17 @@ Get_I2C_Time_With_Battery_Backup(){    //software I2C because crappy ECH has no 
        years2   = Soft_I2C_Read(0);    // 07h years  7 to 4 YEARS 0 to 9 ten?s place,  3 to 0 = 0 to 9 unit place   ? read data (master sends not-acknowledge bit) page 65
        Soft_I2C_Stop();
 
-       // hundredths = ((hundredths & 0xF0) >> 4)*10 + (hundredths & 0x0F);
-        seconds2  =  ((seconds2 & 0x70) >> 4)*10 + (seconds2 & 0x0F);
-        minutes2  =  ((minutes2 & 0x70) >> 4)*10 + (minutes2 & 0x0F);  //  page 22
-        hours2    =  ((hours2   & 0x30) >> 4)*10 + (hours2   & 0x0F);
-        date3     =  ((date3    & 0x70) >> 4)*10 + (date3    & 0x0F);
-        months2   =  ((months2  & 0x10) >> 4)*10 + (months2  & 0x0F);
-        years2    =  ((years2   & 0xF0) >> 4)*10 + (years2   & 0x0F);
-
-      //  return seconds2;
-      //  return minutes2;
-      //  return hours2;
-      //  return date3;
-      //  return months2;
-
+       //hundredths = ((hundredths & 0xF0) >> 4)*10 + (hundredths & 0x0F);
+       seconds2  =  ((seconds2 & 0x70) >> 4)*10 + (seconds2 & 0x0F);
+       minutes2  =  ((minutes2 & 0x70) >> 4)*10 + (minutes2 & 0x0F);  //  page 22
+       hours2    =  ((hours2   & 0x30) >> 4)*10 + (hours2   & 0x0F);
+       date3     =  ((date3    & 0x70) >> 4)*10 + (date3    & 0x0F);
+       months2   =  ((months2  & 0x10) >> 4)*10 + (months2  & 0x0F);
+       years2    =  ((years2   & 0xF0) >> 4)*10 + (years2   & 0x0F);
  }
 
 
- void Write_Time(){
+ void Write_Time(){  //Have to keep updating time because crappy EFH144 Calibration bits do not work.
 
   // RTCC registers unlock procedure
   SYSKEY = 0xAA996655;      // Write first unlock key to SYSKEY
@@ -3145,31 +2949,29 @@ Get_I2C_Time_With_Battery_Backup(){    //software I2C because crappy ECH has no 
 
  //RTCCON = 0b10000000001000001001001000;   //does not work with ECH144
 
-   RTCCONBITS.CAL = 0b1000000000;
+   RTCCONBITS.CAL = 0b1000000000;  //Does Not Work
    CAL9_BIT = 1;
    SYSKEY = 0x0;
 
  }
 
 
-void Adjust_Clock_Registers_Battery_Backup(){
+void Adjust_Clock_Registers_Battery_Backup(){    //NXP PCF85263A DOES WORK, CAN BE CALIBRATED AND KEEPS TIME WHEN POWER OFF
                                       //   Table 24. OFFM bit - oscillator control register (address 25h)  PAGE 34 & registers on page 13
                                       //  ? A2h - Write slave address  ? A3h - Read slave address
       Soft_I2C_Start();
       Soft_I2C_Write(0xA2);         //  page 18 error hours min secs etc //
       Soft_I2C_Write(0x25);         //  oscillator control register (address 25h) PAGE 34
       Soft_I2C_Write(0b00000100);   //  bit 6 is fast correction, every 8 min PAGE 42   bits 3 and 2 =  01 = low drive; RS(max): 60 k??; reduced IDD
-   //   Soft_I2C_Write(0b01000000);
       Soft_I2C_Stop();
 
       Soft_I2C_Start();                                                      //bits 1 and 0 = 7.0 pF crystal from Mouser
       Soft_I2C_Write(0xA2);
       Soft_I2C_Write(0x24);        //The PCF85263A incorporates an offset register (address 24h)    OFFM bit - oscillator control register (address 25h)
       Soft_I2C_Write(0b11111110); // offset register (address 24h) bit description PAGE 34  11111110 VERY ACCURATE
-      Soft_I2C_Stop();            // ? Accuracy tuning  PAGE 34
-                                        //  10000000 made clock 10 seconds fast in 6 hours approx
+      Soft_I2C_Stop();            // ? Accuracy tuning  PAGE 34     //bits 1 and 0 = 7.0 pF crystal from Mouser
 
-      Soft_I2C_Start();                                                      //bits 1 and 0 = 7.0 pF crystal from Mouser
+      Soft_I2C_Start();
       Soft_I2C_Write(0xA2);
       Soft_I2C_Write(0x27);        //The PCF85263A
       Soft_I2C_Write(0b00001000); // PAGE 50 OUTPUT PIN  Pin_IO- pin input output control register (address 27h) bit description PAGE 50   CLOCK OUTPUT MODE BITS 1 AND ZERO
@@ -3181,7 +2983,6 @@ void Adjust_Clock_Registers_Battery_Backup(){
       Soft_I2C_Write(0b00000110); // CLOCK OUTPUT MODE BITS 1 AND ZERO
       Soft_I2C_Stop();            //  01 once per second   BITS 6 & 5
 
-      Clear_Screen_SSD1963(2);
                                   //Correction when OFFM = 0 EVERY NTH HOUR
                                   //Correction pulses for OFFM = 1  EVERY 8TH MINUTE  PAGE 36
 }
@@ -3223,8 +3024,6 @@ void Set_I2C_Time_Battery_Backup(){
 
 
 unsigned char ShowOnce = 1;
-unsigned long Picture = 768006;
-
 void Show_Time(){
 
      TFT_Set_Font(Academy_Engraved_LET101x183_Regular,CL_Yellow,FO_HORIZONTAL);
@@ -3257,9 +3056,6 @@ void Show_Time(){
 
 
 unsigned long SRAM_ADDRESS = 0x20000000;
-#define SRAM_ADDR 0x20000000
-#define RAM_SIZE 16*512000
-
 const unsigned long SRAM_Buffer_Size = 220000;
 unsigned int SRAM_Buffer[SRAM_Buffer_Size];//absolute 0xA0000000;   //BOTTOM OF RAM MEMORY AREA  PAGE 62 DATASHEET
 
@@ -3336,7 +3132,6 @@ void Poll_DMA(){
         CHERIF_bit=0;
         TFT_Write_text("Channel Address Error Interrupt Flag",x_position,y_position + Font_Height*5);
       }
-
 }
 
 
@@ -3426,9 +3221,7 @@ void SRAM_Controller(){
      EBISMCON = 0x00000000;              //16 BIT WIDE DATA  EBISMCON: External Bus Interface Static Memory Control Register   page 10
 
      CFGEBIC = 0;                        //CFGEBIA:  External Bus Interface Address Pin Configuration Register   ZERO = ALL EBI PINS ARE GENERAL USE TOO
-
 }
-
 
 
 void Set_Bus_Speeds(){
@@ -3499,7 +3292,6 @@ void main(){
       unsigned char Writememory = 0;
       unsigned char Readmemory = 0;
       unsigned char secondsvalid = 1;
-      unsigned char onlyonce3 = 0;
       unsigned int Start_Column = 0;
       unsigned int End_Column = 0;
       unsigned int Start_Row = 0;
@@ -3508,8 +3300,8 @@ void main(){
       unsigned int Capture_End_Row = 479;
       unsigned int Capture_Start_Column = 100;
       unsigned int Capture_End_Column = 750;
-                                            // Screen_Capture(180,480,105,480);
-      SecondsColour = 14;
+
+      SecondsColour = Yellow;
       secxpos = 630;
       secypos = 330;
 
@@ -3525,8 +3317,8 @@ void main(){
       Init_Ext_Mem();
       Soft_I2C_Init();                      //Mikroe Software Controlled I2c Because The Efh144 Does Not Issue An I2c Stop.
 
-    //  Adjust_Clock_Registers_Battery_Backup();  //once
- //     Set_I2C_Time_Battery_Backup(); // once
+    //Adjust_Clock_Registers_Battery_Backup();  //once
+    //Set_I2C_Time_Battery_Backup();            //once
       Get_I2C_Time_With_Battery_Backup();
       Write_Time();
 
@@ -3546,7 +3338,7 @@ void main(){
 
       Clear_Screen_SSD1963(Black);          //Background Colour For Write Number Function 15 Colours Or Enter Your Own Choice
 
-      TFT_Ext_Image(0,0,0x004A46BC,1);      // mistyfield_jpg
+      TFT_Ext_Image(0,0,0x4A46BC,1);      // mistyfield_jpg
 
       Start_Column = Capture_Start_Column;
       End_Column = Capture_End_Column;
@@ -3578,7 +3370,7 @@ void main(){
       LATC3_BIT = 1;   //WRITE PIN PMWR WRITE PIN ON PIC PIN 12 PIN 17 ON SRAM W/E
       LATC4_BIT = 1;   //O/E MEMORY OUTPUT ENABLE PIN 41 PMRD PMP READ PIN 13 ON PIC  EBIOE/AN19/RPC4/PMRD/RC4*/
 
-      secondsvalid = 1;    //In Case I Do Not Want The Seconds To Be Displayed
+      secondsvalid = 1;  //In Case I Do Not Want The Seconds To Be Displayed
 
 
 
@@ -3633,7 +3425,7 @@ void main(){
                  // DMA_EBI_Start_Increment(2097151);    //21 BITS TURNED ON
                  // DMA_EBI_Start_Increment(4194303);    //22 BITS TURNED ON
                   //DMA_EBI_Start_Increment(8388607);    //23 BITS TURNED ON
-                  //  DMA_EBI_Start_Increment(16777215);   //16 MEG SRAM ALL 24 BITS TURNED ON
+                  //DMA_EBI_Start_Increment(16777215);   //16 MEG SRAM ALL 24 BITS TURNED ON
                   }
 
 
@@ -3651,14 +3443,14 @@ void main(){
                   TFT_Write_text(":",372,140);
                       Poll_DMA();
 
-                   Write_Number(RH15_BIT,30,0,Red);     //EBIA23
+                   Write_Number(RH15_BIT,30,0,Red);       //EBIA23
                    Write_Number(RJ3_BIT,30,27,White);     //EBIA22
                    Write_Number(RK7_BIT,30,54,White);     //EBIA21
                    Write_Number(RK6_BIT,30,81,White);     //EBIA20
                    Write_Number(RK5_BIT,30,108,White);    //EBIA19
                    Write_Number(RK4_BIT,30,135,White);    //EBIA18
                    Write_Number(RK3_BIT,30,162,White);    //EBIA17
-                   Write_Number(RK0_BIT,30,189,Yellow);    //EBIA16
+                   Write_Number(RK0_BIT,30,189,White);    //EBIA16
                    Write_Number(RD9_BIT,30,216,White);    //EBIA15
                    Write_Number(RA4_BIT,30,243,White);    //EBIA14
                    Write_Number(RJ13_BIT,30,270,White);   //EBIA13
@@ -3667,7 +3459,7 @@ void main(){
                    Write_Number(RB8_BIT,30,351,White);    //EBIA10
                    Write_Number(RF4_BIT,30,378,Green);    //EBIA9
                    Write_Number(RF5_BIT,30,405,White);    //EBIA8
-                   Write_Number(RB9_BIT,30,432,Lavenderblush);    //EBIA7
+                   Write_Number(RB9_BIT,30,432,White);    //EBIA7
                   }
 
 
@@ -3679,7 +3471,6 @@ void main(){
                    TFT_Set_Font(Academy_Engraved_LET101x183_Regular,CL_YELLOW,FO_HORIZONTAL);
                    TFT_Write_text(":",372,140);
                    LATA1_bit = 1;
-
                   }
 
 
@@ -3695,7 +3486,6 @@ void main(){
                  if (seconds1s ==2){
                     onlyonce2 = 1;
                     onlyonce = 1;
-                    onlyonce3 = 1;
                   }
 
 
@@ -3718,15 +3508,15 @@ void main(){
 
      switch(seconds2%10)
   {
-    case 0: Write_Number_Zero(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,SecondsColour);  break;
-    case 1: Write_Number_One(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,SecondsColour);  break;
-    case 2: Write_Number_Two(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,SecondsColour);  break;
-    case 3: Write_Number_Three(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,SecondsColour);  break;
+    case 0: Write_Number_Zero(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,2);  break;
+    case 1: Write_Number_One(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,Red);   break;
+    case 2: Write_Number_Two(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,SecondsColour);   break;
+    case 3: Write_Number_Three(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,SecondsColour); break;
     case 4: Write_Number_Four(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,SecondsColour);  break;
     case 5: Write_Number_Five(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,SecondsColour);  break;
-    case 6: Write_Number_Six(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,SecondsColour);  break;
-    case 7: Write_Number_Seven(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,SecondsColour);  break;
-    case 8: Write_Number_Eight(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,SecondsColour);  break;
+    case 6: Write_Number_Six(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,SecondsColour);   break;
+    case 7: Write_Number_Seven(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,SecondsColour); break;
+    case 8: Write_Number_Eight(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,SecondsColour); break;
     case 9: Write_Number_Nine(secxpos+Number_Font_Width+Number_Font_Spacing,secypos,SecondsColour);  break;  
    }
   }
